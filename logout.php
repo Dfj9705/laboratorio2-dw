@@ -1,18 +1,17 @@
 <?php
 
-// Iniciar la sesión
+
 session_start();
 
-// Verificar si hay una sesión activa
 if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true) {
-    // Eliminar todas las variables de sesión
+
     $_SESSION = [];
-    // Destruir la sesión
+
     session_destroy();
 
     header('WWW-Authenticate: Basic realm="Contenido Protegido"');
     header('HTTP/1.0 401 Unauthorized');
-    // header('location: index.php');
+
 
     $mensaje = "Sesión cerrada correctamente.";
 
