@@ -18,6 +18,7 @@
         <li><a href="index.php">Inicio</a></li>
         <li><a href="ingreso.php">Ingreso de proveedor</a></li>
         <li><a href="listado.php">Listado de provedores</a></li>
+        <li><a href="logout.php">Salir</a></li>
     </ul>
 </nav>
 

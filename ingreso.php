@@ -1,5 +1,7 @@
+<?php require_once 'includes/auth.php' ?>
 <?php include_once 'includes/header.php' ?>
 <h1>Formulario de ingreso de proveedores</h1>
+<p>Usuario: <?= $_SESSION['username'] ?></p>
 <section class="section-index">
     <form>
         <div class="input-box">

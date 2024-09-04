@@ -1,7 +1,22 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 require '../classes/Conexion.php';
+session_start();
 
+
+if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
+    // Si no se han enviado las credenciales o son incorrectas, pedir autenticación
+    if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
+        // Enviar el encabezado WWW-Authenticate para solicitar las credenciales
+
+        http_response_code(401);
+        echo json_encode([
+            'codigo' => 0,
+            'mensaje' => "NO AUTENTICADO"
+        ]);
+        exit;
+    }
+}
 
 $conexionObj = new Conexion();
 $conexion = $conexionObj->getConexion();
@@ -14,7 +29,7 @@ $accion = $_REQUEST['accion'] ?? 'default';
 
 switch ($metodo) {
     case 'GET':
-        $sql = "SELECT * FROM proveedor";
+        $sql = "CALL ObtenerProveedores();";
 
         $stm = $conexion->prepare($sql);
         if ($stm === false) {
@@ -65,7 +80,7 @@ switch ($metodo) {
                 exit;
             }
 
-            $sql = "INSERT INTO proveedor (NIT, NombreCompleto, Direccion, Telefono) values (?, ?, ?, ? )";
+            $sql = "CALL AgregarProveedor(?, ?, ?, ? )";
 
             $stm = $conexion->prepare($sql);
             if ($stm === false) {
@@ -95,7 +110,7 @@ switch ($metodo) {
             $stm->close();
         } else if ($accion == 'activar') {
             $_POST['NIT'] = htmlspecialchars($_POST['NIT']);
-            $_POST['Activo'] = (int)filter_var($_POST['Activo'], FILTER_SANITIZE_NUMBER_INT);
+            $_POST['Activo'] = (int) filter_var($_POST['Activo'], FILTER_SANITIZE_NUMBER_INT);
 
             if ($_POST['NIT'] == '') {
                 echo json_encode([
@@ -104,8 +119,8 @@ switch ($metodo) {
                 ]);
                 exit;
             }
-            $activo =  $_POST['Activo'] == 1 ? 0 : 1;
-            $sql = "UPDATE proveedor set Activo = ? where NIT = ?";
+            $activo = $_POST['Activo'] == 1 ? 0 : 1;
+            $sql = "CALL ToggleProveedor(?, ?);";
 
             $stm = $conexion->prepare($sql);
             if ($stm === false) {
